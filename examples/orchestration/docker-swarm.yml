@@ -46,7 +46,7 @@ services:
       placement:
         constraints: [node.role == manager]
     networks:
-      - dt-network
+      - demo-network
 
 
 volumes:
@@ -55,7 +55,4 @@ volumes:
   portainer:
 
 networks:
-  agent-network:
-    driver: overlay
-    attachable: true
-  dt-network:
+  demo-network:
