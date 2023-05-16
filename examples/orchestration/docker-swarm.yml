@@ -2,7 +2,7 @@ version: "3.8"
 services:
 
   web:
-    image: web_demo
+    image: agp94/demo_docker:latest
     build: ../build
     ports:
       - "9090:80"
