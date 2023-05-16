@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+
+  web:
+    image: web_demo
+    build: ../build
+    ports:
+      - "9090:80"
+    networks:
+      - demo-network
+
+  redis:
+    image: redis
+    volumes:
+      - demo-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - demo-network
+
+volumes:
+  demo-data:
+
+networks:
+  demo-network:

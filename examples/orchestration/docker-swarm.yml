@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+
+  web:
+    image: web_demo
+    build: ../build
+    ports:
+      - "9090:80"
+    networks:
+      - demo-network
+
+  redis:
+    image: 'bitnami/redis:latest'
+    ports:
+      - '6379'
+    environment:
+      - REDIS_REPLICATION_MODE=master
+      - REDIS_PASSWORD=my_master_password
+    volumes:
+      - 'redis-data:/bitnami'
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+  redis-replica:
+    image: 'bitnami/redis:latest'
+    ports:
+      - '6379'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=my_master_password
+      - REDIS_PASSWORD=my_replica_password
+    deploy:
+      placement:
+        constraints: [node.role == worker]
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - dt-network
+
+
+volumes:
+  demo-data:
+  redis-data:
+  portainer:
+
+networks:
+  agent-network:
+    driver: overlay
+    attachable: true
+  dt-network:
